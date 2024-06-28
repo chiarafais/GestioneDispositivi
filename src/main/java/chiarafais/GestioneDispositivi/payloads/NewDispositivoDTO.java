@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Size;
 public record NewDispositivoDTO(
         @NotEmpty(message = "È obbligatoria la tipologia")
         @Size(min = 2, max = 30, message = "La tipologia deve essere compresa tra i 2 e i 30 caratteri")
-        String tipologia,
+        String TipoDispositivo,
         @NotNull(message = "Lo stato è obbligatorio")
-        String stato,
-        Integer dipendenteId
+        String StatoDispositivo
+//        Integer dipendenteId
 ) {
 }

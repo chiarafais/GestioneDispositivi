@@ -2,6 +2,9 @@ package chiarafais.GestioneDispositivi.services;
 
 import chiarafais.GestioneDispositivi.entities.Dipendente;
 import chiarafais.GestioneDispositivi.entities.Dispositivo;
+import chiarafais.GestioneDispositivi.enums.StatoDispositivo;
+import chiarafais.GestioneDispositivi.enums.TipoDispositivo;
+import chiarafais.GestioneDispositivi.exceptions.BadRequestException;
 import chiarafais.GestioneDispositivi.exceptions.NotFoundException;
 import chiarafais.GestioneDispositivi.payloads.NewDispositivoDTO;
 import chiarafais.GestioneDispositivi.repositories.DipendentiDAO;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,9 +36,25 @@ public class DispositiviService {
         return dispositiviDAO.findAll();
     }
 
+    public static TipoDispositivo convertToStringTipo(NewDispositivoDTO newDispositivoDTO){
+        try {
+            return TipoDispositivo.valueOf(newDispositivoDTO.TipoDispositivo().toUpperCase());
+        }catch (IllegalArgumentException exception){
+            throw new BadRequestException("Il tipo del dispositivo deve essere SMARTPHONE,TABLET O LAPTOP!");
+        }
+    }
+
+    public static StatoDispositivo convertToStringStato(NewDispositivoDTO newDispositivoDTO){
+        try {
+            return StatoDispositivo.valueOf(newDispositivoDTO.StatoDispositivo().toUpperCase());
+        }catch (IllegalArgumentException exception){
+            throw new BadRequestException("lo stato del dispositivo deve essere DISPONIBILE,ASSEGNATO,IN_MANUTENZIONE o DISMESSO!");
+        }
+    }
+
     public Dispositivo saveDispositivo(NewDispositivoDTO newDispositivoDTO) {
 
-        Dispositivo dispositivo = new Dispositivo(newDispositivoDTO.tipologia(),newDispositivoDTO.stato());
+        Dispositivo dispositivo = new Dispositivo(convertToStringTipo(newDispositivoDTO),convertToStringStato(newDispositivoDTO));
 //        System.out.println(dispositivo);
         return dispositiviDAO.save(dispositivo);
     }
@@ -46,8 +66,8 @@ public class DispositiviService {
 
     public Dispositivo findByIdAndUpdate(int id, Dispositivo updatedDispositivo) {
         Dispositivo found = findById(id);
-        found.setTipologia(updatedDispositivo.getTipologia());
-        found.setStato(updatedDispositivo.getStato());
+        found.setTipoDispositivo(updatedDispositivo.getTipoDispositivo());
+        found.setStatoDispositivo(updatedDispositivo.getStatoDispositivo());
         return dispositiviDAO.save(found);
     }
 
@@ -59,27 +79,22 @@ public class DispositiviService {
 //    public Dispositivo assegnaDispositivo(int dispositivoId, int dipendenteId) {
 //        Dispositivo dispositivo = dispositiviDAO.findById(dispositivoId)
 //                .orElseThrow(() -> new EntityNotFoundException("Dispositivo non trovato con ID: " + dispositivoId));
-//
 //        Dipendente dipendente = dipendentiDAO.findById(dipendenteId)
 //                .orElseThrow(() -> new EntityNotFoundException("Dipendente non trovato con ID: " + dipendenteId));
-//
 //        dispositivo.setDipendente(dipendente);
-//
 //        return dispositiviDAO.save(dispositivo);
 //    }
 
     @Transactional
-    public void assegnaDispositivi(int dipendenteId, List<Integer> dispositiviId) {
+    public Dipendente assegnaDispositivi(int dipendenteId, int dispositiviId) {
         Dipendente dipendente = dipendentiDAO.findById(dipendenteId)
                 .orElseThrow(() -> new EntityNotFoundException("Dipendente non trovato con ID: " + dipendenteId));
-
-        List<Dispositivo> dispositivi = dispositiviDAO.findAllById(dispositiviId);
-
-        for (Dispositivo dispositivo : dispositivi) {
-            dispositivo.setDipendente(dipendente);
-        }
-
-        dispositiviDAO.saveAll(dispositivi);
+        Dispositivo dispositivi = dispositiviDAO.findById(dispositiviId)
+        .orElseThrow(() -> new EntityNotFoundException("Dipendente non trovato con ID: " + dispositiviId));
+        List<Dispositivo> prova= new ArrayList<>();
+        prova.add(dispositivi);
+        dipendente.setDispositivi(prova);
+        return dipendentiDAO.save(dipendente);
     }
 
     public Page<Dispositivo> getDispositivi(int page, int size, String sortBy){
@@ -87,4 +102,5 @@ public class DispositiviService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return this.dispositiviDAO.findAll(pageable);
     }
+
 }

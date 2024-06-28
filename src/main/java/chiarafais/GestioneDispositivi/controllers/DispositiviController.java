@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/dispositivi")
 public class DispositiviController {
     @Autowired
-    private DispositiviService dispositiviService;
+    DispositiviService dispositiviService;
 
     //    1. POST http://localhost:3001/dispositivi (+ body)
     @PostMapping
@@ -34,12 +34,12 @@ public class DispositiviController {
         return new NewDispositivoRespDTO(this.dispositiviService.saveDispositivo(body).getId());}
 
     //      1.2 POST per assegnare uno o più dispositivi al dipendente
-//    http://localhost:3001/dispositivi/assegna/{dipendenteId} + body[dispositivoId, dispositivoId ...]
-    @PostMapping("/assegna/{dipendenteId}")
-    public ResponseEntity<String> assegnaDispositivi(@PathVariable int dipendenteId, @RequestBody List<Integer> dispositiviId) {
-        dispositiviService.assegnaDispositivi(dipendenteId, dispositiviId);
-        return ResponseEntity.ok("Dispositivi assegnati con successo al dipendente con ID: " + dipendenteId);
-    }
+////    http://localhost:3001/dispositivi/assegna/{dipendenteId} + body[dispositivoId, dispositivoId ...]
+//    @PostMapping("/assegna/{dipendenteId}")
+//    public ResponseEntity<String> assegnaDispositivi(@PathVariable int dipendenteId, @RequestBody Dispositivo body ) {
+//        dispositiviService.assegnaDispositivi(dipendenteId, body);
+//        return ResponseEntity.ok("Dispositivi assegnati con successo al dipendente con ID: " + dipendenteId);
+//    }
 
 
     // 2. GET http://localhost:3001/dispositivi/{dispositivoId}
