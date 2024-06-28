@@ -21,9 +21,6 @@ public class Dipendente {
     private String surname;
     private String email;
     private String propic;
-    @JsonIgnore
-    @OneToMany(mappedBy = "dipendente")
-    private List<Dispositivo> dispositivi;
 
     public Dipendente(String username, String name, String surname, String email) {
         this.username = username;
