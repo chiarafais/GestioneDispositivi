@@ -85,17 +85,17 @@ public class DispositiviService {
 //        return dispositiviDAO.save(dispositivo);
 //    }
 
-    @Transactional
-    public Dipendente assegnaDispositivi(int dipendenteId, int dispositiviId) {
-        Dipendente dipendente = dipendentiDAO.findById(dipendenteId)
-                .orElseThrow(() -> new EntityNotFoundException("Dipendente non trovato con ID: " + dipendenteId));
-        Dispositivo dispositivi = dispositiviDAO.findById(dispositiviId)
-        .orElseThrow(() -> new EntityNotFoundException("Dipendente non trovato con ID: " + dispositiviId));
-        List<Dispositivo> prova= new ArrayList<>();
-        prova.add(dispositivi);
-        dipendente.setDispositivi(prova);
-        return dipendentiDAO.save(dipendente);
-    }
+//    @Transactional
+//    public Dipendente assegnaDispositivi(int dipendenteId, int dispositiviId) {
+//        Dipendente dipendente = dipendentiDAO.findById(dipendenteId)
+//                .orElseThrow(() -> new EntityNotFoundException("Dipendente non trovato con ID: " + dipendenteId));
+//        Dispositivo dispositivi = dispositiviDAO.findById(dispositiviId)
+//        .orElseThrow(() -> new EntityNotFoundException("Dipendente non trovato con ID: " + dispositiviId));
+//        List<Dispositivo> prova= new ArrayList<>();
+//        prova.add(dispositivi);
+//        dipendente.setDispositivi(prova);
+//        return dipendentiDAO.save(dipendente);
+//    }
 
     public Page<Dispositivo> getDispositivi(int page, int size, String sortBy){
         if(size > 50) size = 50;
